@@ -1,0 +1,58 @@
+{
+  "testName": "Get Policies With Pagination",
+  "endpoint": "/v1/policy/list",
+  "method": "GET",
+  "headers": {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "Authorization": "Bearer {{authToken}}",
+    "X-Request-ID": "{{requestId}}"
+  },
+  "queryParameters": {
+    "customerId": "CUST_001",
+    "page": 0,
+    "size": 5,
+    "sort": "effectiveDate,desc"
+  },
+  "testData": {
+    "paginationScenarios": [
+      {
+        "page": 0,
+        "size": 5,
+        "expectedMinRecords": 1,
+        "expectedMaxRecords": 5
+      },
+      {
+        "page": 1,
+        "size": 10,
+        "expectedMinRecords": 0,
+        "expectedMaxRecords": 10
+      },
+      {
+        "page": 0,
+        "size": 20,
+        "expectedMinRecords": 1,
+        "expectedMaxRecords": 20
+      }
+    ],
+    "invalidPagination": [
+      {
+        "page": -1,
+        "size": 10,
+        "expectedStatusCode": 400
+      },
+      {
+        "page": 0,
+        "size": 0,
+        "expectedStatusCode": 400
+      },
+      {
+        "page": 0,
+        "size": 1001,
+        "expectedStatusCode": 400
+      }
+    ]
+  },
+  "expectedStatusCode": 200,
+  "timeout": 5000
+}

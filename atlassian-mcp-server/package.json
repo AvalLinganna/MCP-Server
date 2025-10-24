@@ -1,0 +1,29 @@
+{
+  "name": "atlassian-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for Atlassian integration with project",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "node test/masterTestRunner.js",
+    "test:jira": "node test/jiraToolsTest.js",
+    "test:confluence": "node test/confluenceToolsTest.js",
+    "test:swagger": "node test/swaggerToolsTest.js",
+    "test:image": "node test/imageServiceTest.js",
+  "test:simple": "node test/simpleTest.js",
+  "build": "echo 'No build step defined for MCP server'"
+  },
+  "keywords": ["mcp", "jira", "atlassian"],
+  "author": "Capgemini",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.6.0",
+    "node-fetch": "^3.3.2",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0"
+  }
+}

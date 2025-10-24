@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:tls="http://www.mulesoft.org/schema/mule/tls" 
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+
+	<!-- TLS Context for HTTPS Listener -->
+	<tls:context name="zurich-tls-context" doc:name="TLS Context" doc:id="a1b2c3d4-e5f6-7890-1234-567890abcdef">
+		<tls:key-store type="jks" path="${tls.keystore.path}" alias="${tls.keystore.alias}" keyPassword="${secure::tls.keystore.key.password}" password="${secure::tls.keystore.password}" />
+		<tls:trust-store type="jks" path="${tls.truststore.path}" password="${secure::tls.truststore.password}" />
+	</tls:context>
+	
+	<!-- Secure TLS Context for outbound requests -->
+	<tls:context name="secure-outbound-tls-context" doc:name="Secure Outbound TLS Context" doc:id="b2c3d4e5-f6g7-8901-2345-678901bcdefg">
+		<tls:trust-store type="jks" path="${tls.outbound.truststore.path}" password="${secure::tls.outbound.truststore.password}" />
+	</tls:context>
+
+</mule>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="ZurichCountryWiseTestSuite" parallel="classes" thread-count="2" verbose="1">
+    
+    <parameter name="browser" value="chrome"/>
+    <parameter name="headless" value="false"/>
+    
+    <!-- Listeners for reporting and test management -->
+    <listeners>
+        <listener class-name="com.zurich.testsuite.reporting.CustomTestListener"/>
+    </listeners>
+    
+    <!-- Australia Test Suite -->
+    <test name="AustraliaTests" preserve-order="true">
+        <parameter name="countryCode" value="AU"/>
+        <parameter name="countryName" value="Australia"/>
+        <parameter name="currencyCode" value="AUD"/>
+        <parameter name="timeZone" value="Australia/Sydney"/>
+        <parameter name="language" value="en-AU"/>
+        <parameter name="apiBaseUrl" value="https://au-api.zurich.com"/>
+        <parameter name="webBaseUrl" value="https://au.zurich.com"/>
+        
+        <groups>
+            <run>
+                <include name="AU"/>
+                <include name="smoke"/>
+                <include name="regression"/>
+                <include name="api"/>
+                <include name="policy"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.zurich.testsuite.tests.AU.AuPolicyListTests">
+                <methods>
+                    <include name="testPolicyListWithDifferentPlans"/>
+                    <include name="testPolicyListPagination"/>
+                    <include name="testPolicyDetailsWithPremiumPlan"/>
+                    <include name="testUserPolicyAccessRestriction"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    
+    <!-- Indonesia Test Suite -->
+    <test name="IndonesiaTests" preserve-order="true">
+        <parameter name="countryCode" value="ID"/>
+        <parameter name="countryName" value="Indonesia"/>
+        <parameter name="currencyCode" value="IDR"/>
+        <parameter name="timeZone" value="Asia/Jakarta"/>
+        <parameter name="language" value="id-ID"/>
+        <parameter name="apiBaseUrl" value="https://id-api.zurich.com"/>
+        <parameter name="webBaseUrl" value="https://id.zurich.com"/>
+        
+        <groups>
+            <run>
+                <include name="ID"/>
+                <include name="smoke"/>
+                <include name="regression"/>
+                <include name="api"/>
+                <include name="policy"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.zurich.testsuite.tests.ID.IdPolicyListTests">
+                <methods>
+                    <include name="testPolicyListWithDifferentPlansIndonesia"/>
+                    <include name="testPolicyListPaginationIndonesia"/>
+                    <include name="testPolicyDetailsWithGoldPlanIndonesia"/>
+                    <include name="testUserPolicyAccessRestrictionIndonesia"/>
+                    <include name="testIndonesiaCurrencyHandling"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    
+    <!-- Smoke Test Suite - Critical tests from all countries -->
+    <test name="SmokeTests" preserve-order="true">
+        <parameter name="testType" value="smoke"/>
+        
+        <groups>
+            <run>
+                <include name="smoke"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <!-- Australia Smoke Tests -->
+            <class name="com.zurich.testsuite.tests.AU.AuPolicyListTests">
+                <methods>
+                    <include name="testPolicyListWithDifferentPlans"/>
+                    <include name="testUserPolicyAccessRestriction"/>
+                </methods>
+            </class>
+            
+            <!-- Indonesia Smoke Tests -->
+            <class name="com.zurich.testsuite.tests.ID.IdPolicyListTests">
+                <methods>
+                    <include name="testPolicyListWithDifferentPlansIndonesia"/>
+                    <include name="testUserPolicyAccessRestrictionIndonesia"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    
+    <!-- Regression Test Suite - All tests -->
+    <test name="RegressionTests" preserve-order="false">
+        <parameter name="testType" value="regression"/>
+        
+        <groups>
+            <run>
+                <include name="regression"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <!-- All Australia Tests -->
+            <class name="com.zurich.testsuite.tests.AU.AuPolicyListTests"/>
+            
+            <!-- All Indonesia Tests -->
+            <class name="com.zurich.testsuite.tests.ID.IdPolicyListTests"/>
+        </classes>
+    </test>
+    
+    <!-- API Only Test Suite -->
+    <test name="APITests" preserve-order="false">
+        <parameter name="testType" value="api"/>
+        
+        <groups>
+            <run>
+                <include name="api"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.zurich.testsuite.tests.AU.AuPolicyListTests"/>
+            <class name="com.zurich.testsuite.tests.ID.IdPolicyListTests"/>
+        </classes>
+    </test>
+    
+    <!-- Policy Management Test Suite -->
+    <test name="PolicyManagementTests" preserve-order="true">
+        <parameter name="testType" value="policy"/>
+        
+        <groups>
+            <run>
+                <include name="policy"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.zurich.testsuite.tests.AU.AuPolicyListTests"/>
+            <class name="com.zurich.testsuite.tests.ID.IdPolicyListTests"/>
+        </classes>
+    </test>
+    
+</suite>

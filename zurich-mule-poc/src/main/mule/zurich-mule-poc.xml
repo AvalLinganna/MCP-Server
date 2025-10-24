@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd">
+	<apikit:config outboundHeadersMapName="outboundHeadersMapName" httpStatusVarName="httpStatus" doc:name="Router" doc:id="11ecfa69-5387-4d79-84bf-c84a415e12be" name="Router" api="api\zurich-mule-poc.raml" />
+	<flow name="zurich-mule-poc-main" doc:id="33bb1ea0-3b25-4ad4-bcca-410b52319c24" >
+		<http:listener doc:name="Listener" doc:id="243868fa-ba7d-4e18-a5ed-0de8de1a9f80" config-ref="zurich-mule-poc-httpListenerConfig" path="/poc" >
+			<http:response statusCode="#[vars.httpStatus default 200]" >
+				<http:headers ><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+			</http:response>
+			<http:error-response statusCode="#[vars.httpStatus default 500]" >
+				<http:body ><![CDATA[#[payload]]]></http:body>
+				<http:headers ><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+			</http:error-response>
+		</http:listener>
+		<apikit:router doc:name="APIkit Router" doc:id="e888d399-b22b-4a80-94ac-6b217bb34797" config-ref="Router"/>
+	</flow>
+	<flow name="get:\policy\list:zurich-mule-poc-config" doc:id="e1f57d01-7d97-4678-b072-86b3b061b5b8" >
+		<flow-ref doc:name="get-policy-list-impl" doc:id="5d7fbb48-792e-46b5-a81a-361f12aede2b" name="get-policy-list-impl" />
+		<logger level="INFO" doc:name="Logger: INFO - Completed Request" doc:id="a0a06084-00f5-4b9e-a456-06cdfea24d35" message='#[output application/java --- lib::Logger::logPrefix(vars.conversationId, vars.requestId, vars.clientId, "Get Policy List Completed")]' category="${logging.baseCategory}.get-policy-list.completed" />
+	</flow>
+	<flow name="get:\policy\details\(policyId):zurich-mule-poc-config" doc:id="f2b5c8a1-8d97-4678-b072-86b3b061b5c9" >
+		<set-variable value="#[attributes.uriParams.policyId]" doc:name="Set Policy ID" doc:id="b1a2c3d4-5e6f-7890-abcd-ef1234567890" variableName="policyId"/>
+		<logger level="INFO" doc:name="Logger: INFO - Starting Request" doc:id="c2b3d4e5-6f78-9012-bcde-f23456789012" message='#[output application/java --- "Getting policy details for ID: " ++ vars.policyId]' category="${logging.baseCategory}.get-policy-details.started" />
+		<flow-ref doc:name="get-policy-details-impl" doc:id="d3c4e5f6-7890-1234-cdef-456789012345" name="get-policy-details-impl" />
+		<logger level="INFO" doc:name="Logger: INFO - Completed Request" doc:id="e4d5f6g7-8901-2345-def0-567890123456" message='#[output application/java --- "Get Policy Details Completed for ID: " ++ vars.policyId]' category="${logging.baseCategory}.get-policy-details.completed" />
+	</flow>
+</mule>

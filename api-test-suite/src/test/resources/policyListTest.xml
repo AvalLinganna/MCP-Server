@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="ZurichUK_PolicyList_TestSuite" parallel="tests" thread-count="2">
+    
+    <!-- Suite-wide parameters for Policy List Testing -->
+    <parameter name="browser" value="chrome"/>
+    <parameter name="environment" value="test"/>
+    <parameter name="headless" value="false"/>
+    <parameter name="baseUrl" value="https://test-api.zurich.com"/>
+    <parameter name="apiVersion" value="v1"/>
+    <parameter name="timeout" value="30"/>
+    <parameter name="retryCount" value="2"/>
+    
+    <!-- Test Data Configuration -->
+    <parameter name="testDataPath" value="src/test/resources/data/"/>
+    <parameter name="requestJsonPath" value="src/test/resources/data/requests/"/>
+    <parameter name="responseJsonPath" value="src/test/resources/data/responses/"/>
+    <parameter name="schemaPath" value="src/test/resources/schemas/"/>
+    
+    <!-- Listeners for reporting and data management -->
+    <listeners>
+        <listener class-name="com.capgemini.zurichuk.selenium.reporting.PolicyTestListener"/>
+        <listener class-name="com.capgemini.zurichuk.selenium.dataprovider.JsonDataProvider"/>
+        <listener class-name="com.capgemini.zurichuk.selenium.utils.TestDataManager"/>
+    </listeners>
+    
+    <!-- Policy List API Tests - Core Functionality -->
+    <test name="PolicyList_Core_API_Tests" parallel="methods" thread-count="2">
+        <parameter name="testType" value="core_api"/>
+        <parameter name="dataFile" value="policyListCoreTestData.json"/>
+        
+        <!-- Request/Response JSON Configuration -->
+        <parameter name="getPoliciesRequest" value="requests/getPoliciesByCustomerId.json"/>
+        <parameter name="getPoliciesResponse" value="responses/getPoliciesResponse.json"/>
+        <parameter name="getPolicyByNumberRequest" value="requests/getPolicyByNumber.json"/>
+        <parameter name="getPolicyByNumberResponse" value="responses/getPolicyByNumberResponse.json"/>
+        <parameter name="searchPoliciesRequest" value="requests/searchPolicies.json"/>
+        <parameter name="searchPoliciesResponse" value="responses/searchPoliciesResponse.json"/>
+        
+        <groups>
+            <run>
+                <include name="api"/>
+                <include name="core"/>
+                <include name="policy-list"/>
+                <include name="smoke"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.capgemini.zurichuk.selenium.tests.api.PolicyListCoreTests">
+                <methods>
+                    <include name="testGetPoliciesByCustomerId"/>
+                    <include name="testGetPolicyByNumber"/>
+                    <include name="testSearchPolicies"/>
+                    <include name="testGetActivePolicies"/>
+                    <include name="testValidatePolicyAccess"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    
+    <!-- Policy List API Tests - Pagination and Filtering -->
+    <test name="PolicyList_Pagination_Tests" parallel="methods" thread-count="2">
+        <parameter name="testType" value="pagination"/>
+        <parameter name="dataFile" value="policyListPaginationTestData.json"/>
+        
+        <!-- Pagination Request/Response JSON Configuration -->
+        <parameter name="paginationRequest" value="requests/getPoliciesWithPagination.json"/>
+        <parameter name="paginationResponse" value="responses/getPoliciesPaginatedResponse.json"/>
+        <parameter name="filterRequest" value="requests/getPoliciesByFilter.json"/>
+        <parameter name="filterResponse" value="responses/getPoliciesFilteredResponse.json"/>
+        
+        <groups>
+            <run>
+                <include name="api"/>
+                <include name="pagination"/>
+                <include name="policy-list"/>
+                <include name="regression"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.capgemini.zurichuk.selenium.tests.api.PolicyListPaginationTests">
+                <methods>
+                    <include name="testGetPoliciesWithPagination"/>
+                    <include name="testGetPoliciesByStatus"/>
+                    <include name="testGetPoliciesByProductType"/>
+                    <include name="testGetPoliciesByDateRange"/>
+                    <include name="testGetPoliciesByPremiumRange"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    
+    <!-- Policy List API Tests - Error Scenarios -->
+    <test name="PolicyList_Error_Tests" parallel="methods" thread-count="1">
+        <parameter name="testType" value="error_scenarios"/>
+        <parameter name="dataFile" value="policyListErrorTestData.json"/>
+        
+        <!-- Error Scenario Request/Response JSON Configuration -->
+        <parameter name="invalidCustomerRequest" value="requests/getPolicesInvalidCustomer.json"/>
+        <parameter name="invalidCustomerResponse" value="responses/error400Response.json"/>
+        <parameter name="unauthorizedRequest" value="requests/unauthorizedRequest.json"/>
+        <parameter name="unauthorizedResponse" value="responses/error401Response.json"/>
+        <parameter name="notFoundRequest" value="requests/policyNotFoundRequest.json"/>
+        <parameter name="notFoundResponse" value="responses/error404Response.json"/>
+        
+        <groups>
+            <run>
+                <include name="api"/>
+                <include name="error"/>
+                <include name="policy-list"/>
+                <include name="security"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.capgemini.zurichuk.selenium.tests.api.PolicyListErrorTests">
+                <methods>
+                    <include name="testInvalidCustomerId"/>
+                    <include name="testInvalidPolicyNumber"/>
+                    <include name="testUnauthorizedAccess"/>
+                    <include name="testPolicyNotFound"/>
+                    <include name="testInvalidPaginationParams"/>
+                    <include name="testMalformedRequest"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    
+    <!-- Policy List API Tests - Performance -->
+    <test name="PolicyList_Performance_Tests" parallel="none">
+        <parameter name="testType" value="performance"/>
+        <parameter name="dataFile" value="policyListPerformanceTestData.json"/>
+        
+        <!-- Performance Test Request/Response Configuration -->
+        <parameter name="loadTestRequest" value="requests/loadTestRequest.json"/>
+        <parameter name="loadTestResponse" value="responses/loadTestResponse.json"/>
+        <parameter name="stressTestRequest" value="requests/stressTestRequest.json"/>
+        <parameter name="maxResponseTime" value="5000"/>
+        <parameter name="concurrentUsers" value="10"/>
+        
+        <groups>
+            <run>
+                <include name="api"/>
+                <include name="performance"/>
+                <include name="policy-list"/>
+                <include name="load"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.capgemini.zurichuk.selenium.tests.api.PolicyListPerformanceTests">
+                <methods>
+                    <include name="testResponseTime"/>
+                    <include name="testConcurrentRequests"/>
+                    <include name="testLargeDatasetRetrieval"/>
+                    <include name="testMemoryUsage"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    
+    <!-- Policy List Integration Tests -->
+    <test name="PolicyList_Integration_Tests" parallel="methods" thread-count="2">
+        <parameter name="testType" value="integration"/>
+        <parameter name="dataFile" value="policyListIntegrationTestData.json"/>
+        
+        <!-- Integration Test Request/Response Configuration -->
+        <parameter name="customerPolicyRequest" value="requests/customerPolicyIntegration.json"/>
+        <parameter name="customerPolicyResponse" value="responses/customerPolicyIntegrationResponse.json"/>
+        <parameter name="claimPolicyRequest" value="requests/claimPolicyIntegration.json"/>
+        <parameter name="claimPolicyResponse" value="responses/claimPolicyIntegrationResponse.json"/>
+        
+        <groups>
+            <run>
+                <include name="api"/>
+                <include name="integration"/>
+                <include name="policy-list"/>
+                <include name="regression"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.capgemini.zurichuk.selenium.tests.integration.PolicyListIntegrationTests">
+                <methods>
+                    <include name="testPolicyListWithCustomerService"/>
+                    <include name="testPolicyListWithClaimService"/>
+                    <include name="testPolicyListWithDocumentService"/>
+                    <include name="testPolicyListWithExternalSystems"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    
+    <!-- Policy List Security Tests -->
+    <test name="PolicyList_Security_Tests" parallel="methods" thread-count="1">
+        <parameter name="testType" value="security"/>
+        <parameter name="dataFile" value="policyListSecurityTestData.json"/>
+        
+        <!-- Security Test Request/Response Configuration -->
+        <parameter name="sqlInjectionRequest" value="requests/sqlInjectionTest.json"/>
+        <parameter name="xssRequest" value="requests/xssTest.json"/>
+        <parameter name="jwtTokenRequest" value="requests/jwtTokenValidation.json"/>
+        <parameter name="jwtTokenResponse" value="responses/jwtTokenValidationResponse.json"/>
+        
+        <groups>
+            <run>
+                <include name="api"/>
+                <include name="security"/>
+                <include name="policy-list"/>
+                <include name="vulnerability"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.capgemini.zurichuk.selenium.tests.security.PolicyListSecurityTests">
+                <methods>
+                    <include name="testSQLInjectionPrevention"/>
+                    <include name="testXSSPrevention"/>
+                    <include name="testJWTTokenValidation"/>
+                    <include name="testRoleBasedAccess"/>
+                    <include name="testDataEncryption"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    
+    <!-- Data-Driven Test Configuration -->
+    <test name="PolicyList_DataDriven_Tests" parallel="methods" thread-count="2">
+        <parameter name="testType" value="data_driven"/>
+        <parameter name="dataProvider" value="JsonDataProvider"/>
+        
+        <!-- Data Provider Configuration -->
+        <parameter name="testDataSets" value="data/dataSets/policyListTestSets.json"/>
+        <parameter name="positiveTestData" value="data/positive/policyListPositiveTests.json"/>
+        <parameter name="negativeTestData" value="data/negative/policyListNegativeTests.json"/>
+        <parameter name="boundaryTestData" value="data/boundary/policyListBoundaryTests.json"/>
+        
+        <groups>
+            <run>
+                <include name="api"/>
+                <include name="data-driven"/>
+                <include name="policy-list"/>
+                <include name="comprehensive"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.capgemini.zurichuk.selenium.tests.datadriven.PolicyListDataDrivenTests">
+                <methods>
+                    <include name="testPolicyListWithMultipleDataSets"/>
+                    <include name="testBoundaryConditions"/>
+                    <include name="testEdgeCases"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    
+</suite>

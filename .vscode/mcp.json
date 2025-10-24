@@ -1,0 +1,12 @@
+{
+    "servers": {
+        "atlassian-mcp-server": {
+            "command": "node",
+            "args": ["index.js"],
+            "cwd": "./atlassian-mcp-server",
+            "env": {
+                "NODE_ENV": "development"
+            }
+        }
+    }
+}

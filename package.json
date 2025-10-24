@@ -1,0 +1,55 @@
+{
+  "name": "mcp-workspace",
+  "version": "1.0.0",
+  "description": "Zurich Insurance UK test projects workspace containing multiple POCs and testing frameworks",
+  "private": true,
+  "workspaces": [
+    "atlassian-mcp-server"
+  ],
+  "scripts": {
+    "install:all": "npm install && cd atlassian-mcp-server && npm install --no-workspaces",
+    "install:mcp": "cd atlassian-mcp-server && npm install --no-workspaces",
+    "test:all": "npm run test:mcp",
+    "test:mcp": "cd atlassian-mcp-server && npm test",
+    "lint:all": "npm run lint:mcp",
+    "lint:mcp": "cd atlassian-mcp-server && npm run lint",
+    "build:all": "npm run build:mcp && npm run build:java",
+    "build:mcp": "cd atlassian-mcp-server && npm run build",
+    "build:java": "echo 'Building Java projects...' && cd api-test-suite && mvn clean compile && cd ../zurich-spring-poc && mvn clean compile",
+    "clean": "npm run clean:node && npm run clean:java",
+    "clean:node": "powershell -Command \"if (Test-Path 'node_modules') { Remove-Item -Recurse -Force 'node_modules' }; Set-Location 'atlassian-mcp-server'; if (Test-Path 'node_modules') { Remove-Item -Recurse -Force 'node_modules' }\"",
+    "clean:java": "cd api-test-suite && mvn clean && cd ../zurich-spring-poc && mvn clean",
+    "dev:mcp": "cd atlassian-mcp-server && npm run dev",
+    "start:mcp": "cd atlassian-mcp-server && npm start"
+  },
+  "keywords": [
+    "zurich",
+    "insurance",
+    "testing",
+    "api",
+    "mulesoft",
+    "spring-boot",
+    "atlassian",
+    "mcp",
+    "poc"
+  ],
+  "author": "Zurich Insurance UK Development Team",
+  "license": "PROPRIETARY",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "rimraf": "^6.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zurich-uk/test-workspace.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zurich-uk/test-workspace/issues"
+  },
+  "homepage": "https://github.com/zurich-uk/test-workspace#readme"
+}

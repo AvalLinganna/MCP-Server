@@ -1,0 +1,34 @@
+{
+  "testName": "Get Policies By Customer ID",
+  "endpoint": "/v1/policy/list",
+  "method": "GET",
+  "headers": {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "Authorization": "Bearer {{authToken}}",
+    "X-Request-ID": "{{requestId}}",
+    "X-Client-ID": "selenium-test-suite"
+  },
+  "queryParameters": {
+    "customerId": "CUST_001",
+    "page": 0,
+    "size": 10,
+    "sort": "policyNumber,asc"
+  },
+  "testData": {
+    "validCustomerIds": [
+      "CUST_001",
+      "CUST_002", 
+      "CUST_003",
+      "TEST_CUST_001"
+    ],
+    "invalidCustomerIds": [
+      "INVALID_CUST",
+      "",
+      null,
+      "CUST_999999"
+    ]
+  },
+  "expectedStatusCode": 200,
+  "timeout": 5000
+}

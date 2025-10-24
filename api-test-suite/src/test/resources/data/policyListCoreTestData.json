@@ -1,0 +1,149 @@
+{
+  "testSuite": "PolicyList API Test Suite",
+  "version": "1.0.0",
+  "environment": "test",
+  "baseUrl": "https://test-api.zurich.com",
+  "apiVersion": "v1",
+  "testConfiguration": {
+    "timeout": 30000,
+    "retryCount": 2,
+    "parallelExecution": true,
+    "threadCount": 2
+  },
+  "authentication": {
+    "type": "JWT",
+    "tokenEndpoint": "/v1/auth/login",
+    "refreshEndpoint": "/v1/auth/refresh",
+    "testCredentials": {
+      "username": "test.user@zurich.com",
+      "password": "TestPassword123!",
+      "clientId": "selenium-test-suite"
+    }
+  },
+  "testData": {
+    "customers": [
+      {
+        "customerId": "CUST_001",
+        "customerName": "John Smith",
+        "email": "john.smith@email.com",
+        "policyCount": 3,
+        "status": "ACTIVE"
+      },
+      {
+        "customerId": "CUST_002",
+        "customerName": "Jane Doe",
+        "email": "jane.doe@email.com",
+        "policyCount": 2,
+        "status": "ACTIVE"
+      },
+      {
+        "customerId": "CUST_003",
+        "customerName": "Bob Johnson",
+        "email": "bob.johnson@email.com",
+        "policyCount": 1,
+        "status": "INACTIVE"
+      }
+    ],
+    "policies": [
+      {
+        "policyNumber": "POL_001",
+        "customerId": "CUST_001",
+        "productType": "HOME",
+        "status": "ACTIVE",
+        "premiumAmount": 1250.00
+      },
+      {
+        "policyNumber": "POL_002",
+        "customerId": "CUST_001",
+        "productType": "AUTO",
+        "status": "ACTIVE",
+        "premiumAmount": 850.00
+      },
+      {
+        "policyNumber": "POL_003",
+        "customerId": "CUST_001",
+        "productType": "LIFE",
+        "status": "ACTIVE",
+        "premiumAmount": 2500.00
+      },
+      {
+        "policyNumber": "POL_004",
+        "customerId": "CUST_002",
+        "productType": "HOME",
+        "status": "ACTIVE",
+        "premiumAmount": 1100.00
+      },
+      {
+        "policyNumber": "POL_005",
+        "customerId": "CUST_002",
+        "productType": "AUTO",
+        "status": "EXPIRED",
+        "premiumAmount": 750.00
+      }
+    ],
+    "productTypes": [
+      "HOME",
+      "AUTO",
+      "LIFE",
+      "HEALTH",
+      "TRAVEL",
+      "BUSINESS"
+    ],
+    "statuses": [
+      "ACTIVE",
+      "EXPIRED",
+      "CANCELLED",
+      "PENDING",
+      "SUSPENDED"
+    ]
+  },
+  "validationRules": {
+    "policyNumber": {
+      "pattern": "^POL_[0-9]{3,6}$",
+      "required": true
+    },
+    "customerId": {
+      "pattern": "^CUST_[0-9]{3,6}$",
+      "required": true
+    },
+    "email": {
+      "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+      "required": true
+    },
+    "premiumAmount": {
+      "minimum": 0.01,
+      "maximum": 999999.99,
+      "required": true
+    }
+  },
+  "expectedResponseTimes": {
+    "getPoliciesByCustomerId": 5000,
+    "getPolicyByNumber": 3000,
+    "searchPolicies": 8000,
+    "getPoliciesWithPagination": 5000
+  },
+  "testScenarios": {
+    "positive": [
+      "Valid customer ID with policies",
+      "Valid policy number",
+      "Pagination with valid parameters",
+      "Search with valid criteria",
+      "Filter by status",
+      "Filter by product type"
+    ],
+    "negative": [
+      "Invalid customer ID",
+      "Non-existent policy number",
+      "Invalid pagination parameters",
+      "Empty search criteria",
+      "Unauthorized access",
+      "Malformed request"
+    ],
+    "boundary": [
+      "Maximum page size",
+      "Minimum valid values",
+      "Edge case dates",
+      "Special characters in search"
+    ]
+  }
+}

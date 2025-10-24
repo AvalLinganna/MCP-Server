@@ -1,0 +1,95 @@
+{
+  "policyListRequest": {
+    "requestId": "POL_REQ_001",
+    "userId": "AU_USER_001",
+    "countryCode": "AU",
+    "languageCode": "en-AU",
+    "channelType": "WEB",
+    "filters": {
+      "status": "ACTIVE",
+      "policyType": "TRAVEL",
+      "planType": "PREMIUM"
+    },
+    "pagination": {
+      "page": 1,
+      "size": 10,
+      "sortBy": "createdDate",
+      "sortOrder": "DESC"
+    }
+  },
+  
+  "expectedResponse": {
+    "statusCode": 200,
+    "success": true,
+    "data": {
+      "policies": [
+        {
+          "policyNumber": "AU-POL-001",
+          "policyType": "TRAVEL",
+          "planType": "PREMIUM",
+          "status": "ACTIVE",
+          "premium": "299.99",
+          "currency": "AUD",
+          "startDate": "2024-01-01",
+          "endDate": "2024-12-31"
+        }
+      ],
+      "pagination": {
+        "currentPage": 1,
+        "totalPages": 5,
+        "totalElements": 45,
+        "hasNext": true,
+        "hasPrevious": false
+      }
+    }
+  },
+  
+  "testScenarios": {
+    "differentPlans": {
+      "description": "Verify list shows policies with different plans",
+      "testData": {
+        "planTypes": ["BASIC", "PREMIUM", "GOLD", "PLATINUM"]
+      },
+      "expectedResults": {
+        "shouldContainAllPlanTypes": true,
+        "minimumPoliciesCount": 1
+      }
+    },
+    
+    "pagination": {
+      "description": "Verify Pagination functionality",
+      "testData": {
+        "pageSize": 10,
+        "expectedTotalPages": 5
+      },
+      "expectedResults": {
+        "paginationExists": true,
+        "pageNavigationWorking": true
+      }
+    },
+    
+    "premiumPlanDetails": {
+      "description": "Verify details for PREMIUM plan",
+      "testData": {
+        "planType": "PREMIUM"
+      },
+      "expectedResults": {
+        "containsPremiumDetails": true,
+        "hasCoverageInfo": true,
+        "hasPremiumAmount": true
+      }
+    },
+    
+    "userAccessRestriction": {
+      "description": "Verify user cannot view other user's policies",
+      "testData": {
+        "userA": "AU_USER_A_001",
+        "userB": "AU_USER_B_001"
+      },
+      "expectedResults": {
+        "userBCannotSeeUserAPolicies": true,
+        "authorizationErrorExpected": true
+      }
+    }
+  }
+}

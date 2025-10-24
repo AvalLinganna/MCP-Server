@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="get-policy-list-impl" doc:id="c8b41ff5-20ba-4e2b-b5cd-b690f91edde9" >
+		<flow-ref doc:name="get-policy-list-microservice-call" doc:id="7018c3b9-3250-434d-ae56-2391be878923" name="get-policy-list-microservice-call"/>
+		<ee:transform doc:name="Map Response" doc:id="1a35324b-bfa7-4229-88f9-d2d0a4156a7e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	totalNumberofPolicies: sizeOf(payload),
+	policies: payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>

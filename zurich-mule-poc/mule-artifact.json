@@ -1,0 +1,35 @@
+{
+  "minMuleVersion": "4.8.0",
+  "javaSpecificationVersions": [
+    "1.8",
+    "11"
+  ],
+  "secureProperties": [
+    "api.ms.username",
+    "api.ms.password",
+    "tls.keystore.password",
+    "tls.keystore.key.password",
+    "tls.truststore.password",
+    "tls.outbound.truststore.password"
+  ],
+  "configs": [
+    "src/main/mule/common/*.xml",
+    "src/main/mule/implementation/*.xml", 
+    "src/main/mule/system/*.xml",
+    "src/main/mule/*.xml"
+  ],
+  "redeploymentEnabled": true,
+  "name": "zurich-mule-poc",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedResources": [],
+      "exportedPackages": [],
+      "includeTestDependencies": false
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}

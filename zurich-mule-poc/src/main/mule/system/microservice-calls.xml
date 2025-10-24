@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="get-policy-list-microservice-call" doc:id="c8b41ff5-20ba-4e2b-b5cd-b690f91edde9" >
+		<http:request method="GET" doc:name="Request to MS" doc:id="9a102c6f-3b3d-4a43-af84-224dca6759e7" path="${ms.policy.list.path}" config-ref="https-ms-request-configuration">
+			<http:query-params ><![CDATA[#[{
+	"emailId": attributes.queryParams.emailId default null,
+	"pageNo": attributes.queryParams.pageNo default 1,
+	"pageSize": attributes.queryParams.pageSize default 10
+}]]]></http:query-params>
+		</http:request>
+	</sub-flow>
+	
+	<sub-flow name="get-policy-details-microservice-call" doc:id="d9c52ff6-31cb-5f3c-c6de-c701g92feef0" >
+		<logger level="INFO" doc:name="Logger: Calling Policy Details MS" doc:id="a1b2c3d4-e5f6-7890-abcd-ef1234567890" message='#[output application/java --- "Calling microservice for policy ID: " ++ vars.policyId]' category="${logging.baseCategory}.microservice.policy-details"/>
+		<http:request method="GET" doc:name="Request Policy Details from MS" doc:id="0b213d7g-4c4e-5b54-bg95-335edb7860f8" path="${ms.policy.details.path}" config-ref="https-ms-request-configuration">
+			<http:uri-params ><![CDATA[#[{
+	"policyId": vars.policyId
+}]]]></http:uri-params>
+			<http:query-params ><![CDATA[#[{
+	"includeDetails": "true"
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="Logger: MS Response Received" doc:id="b2c3d4e5-f6g7-8901-bcde-f23456789012" message='#[output application/java --- "Received response from microservice for policy ID: " ++ vars.policyId]' category="${logging.baseCategory}.microservice.policy-details.response"/>
+	</sub-flow>
+</mule>

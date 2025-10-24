@@ -1,0 +1,24 @@
+{
+  "status": "error",
+  "statusCode": 404,
+  "message": "Resource Not Found",
+  "timestamp": "2025-10-16T10:50:00.000Z",
+  "requestId": "req_12349",
+  "error": {
+    "code": "RESOURCE_NOT_FOUND",
+    "description": "The requested policy could not be found",
+    "details": [
+      {
+        "field": "policyNumber",
+        "value": "POL_999999",
+        "message": "Policy with number 'POL_999999' does not exist",
+        "code": "POLICY_NOT_FOUND"
+      }
+    ]
+  },
+  "metadata": {
+    "executionTime": 67,
+    "apiVersion": "v1",
+    "endpoint": "/v1/policy/details/POL_999999"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "status": "success",
+  "statusCode": 200,
+  "message": "Policies retrieved successfully",
+  "timestamp": "2025-10-16T10:30:00.000Z",
+  "requestId": "req_12345",
+  "data": {
+    "policies": [
+      {
+        "policyNumber": "POL_001",
+        "customerId": "CUST_001",
+        "customerName": "John Smith",
+        "email": "john.smith@email.com",
+        "productType": "HOME",
+        "status": "ACTIVE",
+        "premiumAmount": 1250.00,
+        "effectiveDate": "2024-01-15",
+        "expirationDate": "2025-01-15",
+        "createdDate": "2024-01-10",
+        "lastModified": "2024-01-15",
+        "isActive": true
+      },
+      {
+        "policyNumber": "POL_002",
+        "customerId": "CUST_001",
+        "customerName": "John Smith",
+        "email": "john.smith@email.com",
+        "productType": "AUTO",
+        "status": "ACTIVE",
+        "premiumAmount": 850.00,
+        "effectiveDate": "2024-03-01",
+        "expirationDate": "2025-03-01",
+        "createdDate": "2024-02-25",
+        "lastModified": "2024-03-01",
+        "isActive": true
+      },
+      {
+        "policyNumber": "POL_003",
+        "customerId": "CUST_001",
+        "customerName": "John Smith",
+        "email": "john.smith@email.com",
+        "productType": "LIFE",
+        "status": "ACTIVE",
+        "premiumAmount": 2500.00,
+        "effectiveDate": "2024-06-01",
+        "expirationDate": "2025-06-01",
+        "createdDate": "2024-05-20",
+        "lastModified": "2024-06-01",
+        "isActive": true
+      }
+    ],
+    "pagination": {
+      "currentPage": 0,
+      "pageSize": 10,
+      "totalElements": 3,
+      "totalPages": 1,
+      "first": true,
+      "last": true,
+      "numberOfElements": 3
+    },
+    "summary": {
+      "totalPolicies": 3,
+      "activePolicies": 3,
+      "expiredPolicies": 0,
+      "cancelledPolicies": 0,
+      "totalPremiumAmount": 4600.00
+    }
+  },
+  "metadata": {
+    "executionTime": 234,
+    "dataSource": "primary",
+    "cacheUsed": false,
+    "apiVersion": "v1"
+  }
+}

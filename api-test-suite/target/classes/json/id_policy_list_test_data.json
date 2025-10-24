@@ -1,0 +1,141 @@
+{
+  "policyListRequest": {
+    "requestId": "POL_REQ_ID_001",
+    "userId": "ID_USER_001",
+    "countryCode": "ID",
+    "languageCode": "id-ID",
+    "channelType": "WEB",
+    "filters": {
+      "status": "ACTIVE",
+      "policyType": "TRAVEL",
+      "planType": "GOLD"
+    },
+    "pagination": {
+      "page": 1,
+      "size": 15,
+      "sortBy": "createdDate",
+      "sortOrder": "DESC"
+    }
+  },
+  
+  "expectedResponse": {
+    "statusCode": 200,
+    "success": true,
+    "data": {
+      "policies": [
+        {
+          "policyNumber": "ID-POL-001",
+          "policyType": "TRAVEL",
+          "planType": "GOLD",
+          "status": "ACTIVE",
+          "premium": "1500000",
+          "currency": "IDR",
+          "startDate": "2024-01-01",
+          "endDate": "2024-12-31"
+        }
+      ],
+      "pagination": {
+        "currentPage": 1,
+        "totalPages": 3,
+        "totalElements": 32,
+        "hasNext": true,
+        "hasPrevious": false
+      }
+    }
+  },
+  
+  "testScenarios": {
+    "differentPlansIndonesia": {
+      "description": "Verify list shows policies with different plans for Indonesia",
+      "testData": {
+        "planTypes": ["BASIC", "PREMIUM", "GOLD", "PLATINUM"],
+        "countrySpecific": {
+          "currency": "IDR",
+          "locale": "id-ID",
+          "timezone": "Asia/Jakarta"
+        }
+      },
+      "expectedResults": {
+        "shouldContainAllPlanTypes": true,
+        "shouldContainIDRCurrency": true,
+        "minimumPoliciesCount": 1
+      }
+    },
+    
+    "paginationIndonesia": {
+      "description": "Verify Pagination functionality for Indonesia",
+      "testData": {
+        "pageSize": 15,
+        "expectedTotalPages": 3
+      },
+      "expectedResults": {
+        "paginationExists": true,
+        "pageNavigationWorking": true,
+        "indonesianContentPresent": true
+      }
+    },
+    
+    "goldPlanDetails": {
+      "description": "Verify details for GOLD plan in Indonesia",
+      "testData": {
+        "planType": "GOLD",
+        "countryCode": "ID"
+      },
+      "expectedResults": {
+        "containsGoldDetails": true,
+        "hasCoverageInfo": true,
+        "hasIDRPremiumAmount": true,
+        "indonesianLocalizationPresent": true
+      }
+    },
+    
+    "userAccessRestrictionIndonesia": {
+      "description": "Verify user cannot view other user's policies in Indonesia",
+      "testData": {
+        "userA": "ID_USER_A_001",
+        "userB": "ID_USER_B_001",
+        "countryCode": "ID"
+      },
+      "expectedResults": {
+        "userBCannotSeeUserAPolicies": true,
+        "authorizationErrorExpected": true,
+        "indonesianErrorMessagesPresent": false
+      }
+    },
+    
+    "currencyHandlingIndonesia": {
+      "description": "Verify Indonesia specific currency handling",
+      "testData": {
+        "expectedCurrency": "IDR",
+        "expectedCurrencySymbol": "Rp",
+        "sampleAmount": "1500000"
+      },
+      "expectedResults": {
+        "containsIDRCurrency": true,
+        "properCurrencyFormatting": true,
+        "indonesianNumberFormat": true
+      }
+    }
+  },
+  
+  "indonesianSpecificData": {
+    "currencyFormats": {
+      "symbol": "Rp",
+      "code": "IDR",
+      "decimalPlaces": 0,
+      "thousandSeparator": ".",
+      "decimalSeparator": ","
+    },
+    "localeSettings": {
+      "language": "id",
+      "country": "ID",
+      "timezone": "Asia/Jakarta",
+      "dateFormat": "dd/MM/yyyy"
+    },
+    "businessRules": {
+      "minimumPremium": 100000,
+      "maximumCoverage": 1000000000,
+      "allowedPaymentMethods": ["BANK_TRANSFER", "CREDIT_CARD", "E_WALLET"]
+    }
+  }
+}

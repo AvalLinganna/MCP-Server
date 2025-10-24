@@ -1,0 +1,16 @@
+{
+    "chat.mcp.servers": {
+        "atlassian-mcp-server": {
+            "command": "node",
+            "args": ["index.js"],
+            "cwd": "./atlassian-mcp-server",
+            "env": {
+                "NODE_ENV": "development"
+            }
+        }
+    },
+    "chat.mcp.autostart": "onlyNew",
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.debug.settings.onBuildFailureProceed": true,
+    "java.configuration.updateBuildConfiguration": "interactive"
+}

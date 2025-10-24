@@ -1,0 +1,13 @@
+C:\Users\vlingann\OneDrive - Capgemini\CapgeminiIndia\AI\ZurichUK\Atlassian_POC\zurich-spring-poc\src\main\java\com\zurich\poc\config\DataInitializer.java
+C:\Users\vlingann\OneDrive - Capgemini\CapgeminiIndia\AI\ZurichUK\Atlassian_POC\zurich-spring-poc\src\main\java\com\zurich\poc\config\RestTemplateConfig.java
+C:\Users\vlingann\OneDrive - Capgemini\CapgeminiIndia\AI\ZurichUK\Atlassian_POC\zurich-spring-poc\src\main\java\com\zurich\poc\controller\ClaimController.java
+C:\Users\vlingann\OneDrive - Capgemini\CapgeminiIndia\AI\ZurichUK\Atlassian_POC\zurich-spring-poc\src\main\java\com\zurich\poc\exception\ApiResponse.java
+C:\Users\vlingann\OneDrive - Capgemini\CapgeminiIndia\AI\ZurichUK\Atlassian_POC\zurich-spring-poc\src\main\java\com\zurich\poc\exception\GlobalExceptionHandler.java
+C:\Users\vlingann\OneDrive - Capgemini\CapgeminiIndia\AI\ZurichUK\Atlassian_POC\zurich-spring-poc\src\main\java\com\zurich\poc\exception\ResourceNotFoundException.java
+C:\Users\vlingann\OneDrive - Capgemini\CapgeminiIndia\AI\ZurichUK\Atlassian_POC\zurich-spring-poc\src\main\java\com\zurich\poc\model\Claim.java
+C:\Users\vlingann\OneDrive - Capgemini\CapgeminiIndia\AI\ZurichUK\Atlassian_POC\zurich-spring-poc\src\main\java\com\zurich\poc\model\ClaimDTO.java
+C:\Users\vlingann\OneDrive - Capgemini\CapgeminiIndia\AI\ZurichUK\Atlassian_POC\zurich-spring-poc\src\main\java\com\zurich\poc\model\PolicySummary.java
+C:\Users\vlingann\OneDrive - Capgemini\CapgeminiIndia\AI\ZurichUK\Atlassian_POC\zurich-spring-poc\src\main\java\com\zurich\poc\repository\ClaimRepository.java
+C:\Users\vlingann\OneDrive - Capgemini\CapgeminiIndia\AI\ZurichUK\Atlassian_POC\zurich-spring-poc\src\main\java\com\zurich\poc\service\ClaimService.java
+C:\Users\vlingann\OneDrive - Capgemini\CapgeminiIndia\AI\ZurichUK\Atlassian_POC\zurich-spring-poc\src\main\java\com\zurich\poc\service\impl\ClaimServiceImpl.java
+C:\Users\vlingann\OneDrive - Capgemini\CapgeminiIndia\AI\ZurichUK\Atlassian_POC\zurich-spring-poc\src\main\java\com\zurich\poc\ZurichSpringPocApplication.java

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:redis="http://www.mulesoft.org/schema/mule/redis" xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:dynamodb="http://www.mulesoft.org/schema/mule/dynamodb" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd  http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd  http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/dynamodb http://www.mulesoft.org/schema/mule/dynamodb/current/mule-dynamodb.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/sqs http://www.mulesoft.org/schema/mule/sqs/current/mule-sqs.xsd
+http://www.mulesoft.org/schema/mule/redis http://www.mulesoft.org/schema/mule/redis/current/mule-redis.xsd">
+
+    <http:listener-config name="zurich-mule-poc-httpListenerConfig" doc:name="HTTP Listener config" doc:id="1f97892b-0387-4ca5-a321-f211a712e963">
+        <http:listener-connection host="localhost" port="8091" protocol="HTTPS" tlsContext="zurich-tls-context" />
+    </http:listener-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="fe7a4a1c-db15-472d-b42e-041c343d1946" file="config/${env}.yaml" />
+	<global-property doc:name="Global Property" doc:id="b4e36339-43d0-41f5-a049-a2a02b5f932e" name="env" value="local" />
+	<http:request-config name="https-ms-request-configuration" doc:name="HTTP Request configuration" doc:id="163572a1-87c5-4939-8d95-5f2b3b0ef9e8" basePath="${api.ms.basePath}" responseTimeout="${api.ms.responseTimeout}">
+        <http:request-connection host="${api.ms.host}" protocol="${api.ms.protocol}" port="${api.ms.port}">
+            <tls:context >
+				<tls:trust-store type="jks" path="${tls.outbound.truststore.path}" password="${secure::tls.outbound.truststore.password}" />
+			</tls:context>
+			<http:authentication>
+                <http:basic-authentication username="${secure::api.ms.username}" password="${secure::api.ms.password}" />
+            </http:authentication>
+        </http:request-connection>
+    </http:request-config>
+</mule>

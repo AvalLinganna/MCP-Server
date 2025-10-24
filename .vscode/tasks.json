@@ -1,0 +1,14 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "install:mcp",
+			"problemMatcher": [
+				"$gulp-tsc"
+			],
+			"label": "npm: install:mcp",
+			"detail": "cd atlassian-mcp-server && npm install --no-workspaces"
+		}
+	]
+}

@@ -1,0 +1,22 @@
+ms.policy.list.path: "/v1/policy/list"
+ms.policy.details.path: "/v1/policy/details/{policyId}"
+api.ms.basePath: "/ms"
+api.ms.host: "sample.com"
+api.ms.port: "443"
+api.ms.protocol: "HTTPS"
+api.ms.username: "user"
+api.ms.password: "password"
+api.ms.responseTimeout: "30000"
+
+# TLS Configuration
+tls.keystore.path: "keystore/zurich-poc-keystore.jks"
+tls.keystore.alias: "zurich-poc"
+tls.keystore.password: "changeit"
+tls.keystore.key.password: "changeit"
+tls.truststore.path: "keystore/zurich-poc-truststore.jks"
+tls.truststore.password: "changeit"
+tls.outbound.truststore.path: "keystore/outbound-truststore.jks"
+tls.outbound.truststore.password: "changeit"
+
+# Logging configuration
+logging.baseCategory: "com.zurich.poc"

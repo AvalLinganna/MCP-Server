@@ -1,0 +1,33 @@
+{
+  "testName": "Get Policy By Number",
+  "endpoint": "/v1/policy/details/{policyNumber}",
+  "method": "GET",
+  "headers": {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "Authorization": "Bearer {{authToken}}",
+    "X-Request-ID": "{{requestId}}"
+  },
+  "pathParameters": {
+    "policyNumber": "POL_001"
+  },
+  "testData": {
+    "validPolicyNumbers": [
+      "POL_001",
+      "POL_002",
+      "POL_003",
+      "TEST_POL_001",
+      "HOME_POL_001",
+      "AUTO_POL_001"
+    ],
+    "invalidPolicyNumbers": [
+      "INVALID_POL",
+      "",
+      null,
+      "POL_999999",
+      "EXPIRED_POL_001"
+    ]
+  },
+  "expectedStatusCode": 200,
+  "timeout": 3000
+}

@@ -1,0 +1,50 @@
+{
+  "status": "success",
+  "statusCode": 200,
+  "message": "Policy details retrieved successfully",
+  "timestamp": "2025-10-16T10:35:00.000Z",
+  "requestId": "req_12346",
+  "data": {
+    "policy": {
+      "policyNumber": "POL_001",
+      "customerId": "CUST_001",
+      "customerName": "John Smith",
+      "email": "john.smith@email.com",
+      "productType": "HOME",
+      "status": "ACTIVE",
+      "premiumAmount": 1250.00,
+      "effectiveDate": "2024-01-15",
+      "expirationDate": "2025-01-15",
+      "createdDate": "2024-01-10",
+      "lastModified": "2024-01-15",
+      "isActive": true,
+      "details": {
+        "coverage": {
+          "buildingCoverage": 500000,
+          "contentsCoverage": 100000,
+          "liabilityCoverage": 1000000
+        },
+        "deductible": 1000,
+        "paymentFrequency": "ANNUAL",
+        "agent": {
+          "agentId": "AGT_001",
+          "agentName": "Sarah Johnson",
+          "agentEmail": "sarah.johnson@zurich.com",
+          "agentPhone": "+44-20-7123-4567"
+        },
+        "property": {
+          "address": "123 Main Street, London, UK",
+          "propertyType": "DETACHED_HOUSE",
+          "yearBuilt": 1995,
+          "squareFootage": 2500
+        }
+      }
+    }
+  },
+  "metadata": {
+    "executionTime": 156,
+    "dataSource": "primary",
+    "cacheUsed": true,
+    "apiVersion": "v1"
+  }
+}

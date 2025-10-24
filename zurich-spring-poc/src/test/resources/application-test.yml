@@ -1,0 +1,54 @@
+# Test Profile Configuration - KAN-1 Implementation
+# H2 database configuration for unit tests as specified in requirements
+
+spring:
+  profiles:
+    active: test
+  
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+    
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      
+  # Override policy service for testing
+  policy-service:
+    url: http://localhost:8091/poc
+    username: test-user
+    password: test-password
+
+# Jira test configuration
+jira:
+  base-url: https://test-jira-instance.atlassian.net
+  email: test@example.com
+  api-token: test-token
+  project-key: TEST
+
+# Logging configuration for tests
+logging:
+  level:
+    root: WARN
+    com.zurich.poc: DEBUG
+    org.springframework.test: INFO
+    org.hibernate: WARN
+    org.testcontainers: INFO
+    
+# Test-specific configurations
+test:
+  data:
+    cleanup: true
+    seed-data: false

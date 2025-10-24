@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" 
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	
+	<sub-flow name="get-policy-details-impl" doc:id="a1b2c3d4-e5f6-7890-1234-567890abcdef" >
+		<!-- Input validation -->
+		<choice doc:name="Validate Policy ID" doc:id="b2c3d4e5-f6g7-8901-2345-678901bcdefg">
+			<when expression="#[isEmpty(vars.policyId) or vars.policyId == null]">
+				<set-variable value="400" doc:name="Set HTTP Status" doc:id="c3d4e5f6-g7h8-9012-3456-789012cdefgh" variableName="httpStatus"/>
+				<set-payload value='#[{"error": "Policy ID is required"}]' doc:name="Set Error Payload" doc:id="d4e5f6g7-h8i9-0123-4567-890123defghi" mimeType="application/json"/>
+			</when>
+			<otherwise>
+				<logger level="INFO" doc:name="Logger: Policy ID Validation Passed" doc:id="e5f6g7h8-i9j0-1234-5678-901234efghij" message='#[output application/java --- "Policy ID validation passed: " ++ vars.policyId]' category="${logging.baseCategory}.get-policy-details.validation"/>
+				
+				<!-- Call microservice to get policy details -->
+				<flow-ref doc:name="get-policy-details-microservice-call" doc:id="f6g7h8i9-j0k1-2345-6789-012345fghijk" name="get-policy-details-microservice-call"/>
+				
+				<!-- Transform response -->
+				<ee:transform doc:name="Map Policy Details Response" doc:id="g7h8i9j0-k1l2-3456-7890-123456ghijkl" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	policyId: payload.policyId default vars.policyId,
+	policyNumber: payload.policyNumber default null,
+	emailId: payload.emailId default null,
+	status: payload.status default "UNKNOWN",
+	createdDate: payload.createdDate default null,
+	premiumAmount: payload.premiumAmount default 0,
+	coverageDetails: payload.coverageDetails default {},
+	lastModified: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss'Z'"}
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		
+		<!-- Error handling for not found scenarios -->
+		<error-handler>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="Handle Policy Not Found" doc:id="h8i9j0k1-l2m3-4567-8901-234567hijklm" type="HTTP:NOT_FOUND">
+				<set-variable value="404" doc:name="Set HTTP Status 404" doc:id="i9j0k1l2-m3n4-5678-9012-345678ijklmn" variableName="httpStatus"/>
+				<set-payload value='#[{"error": "Policy not found", "policyId": vars.policyId}]' doc:name="Set Not Found Payload" doc:id="j0k1l2m3-n4o5-6789-0123-456789jklmno" mimeType="application/json"/>
+			</on-error-continue>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="Handle General Error" doc:id="k1l2m3n4-o5p6-7890-1234-567890klmnop" type="ANY">
+				<set-variable value="500" doc:name="Set HTTP Status 500" doc:id="l2m3n4o5-p6q7-8901-2345-678901lmnopq" variableName="httpStatus"/>
+				<set-payload value='#[{"error": "Internal server error", "message": error.description default "Unknown error occurred"}]' doc:name="Set Error Payload" doc:id="m3n4o5p6-q7r8-9012-3456-789012mnopqr" mimeType="application/json"/>
+			</on-error-continue>
+		</error-handler>
+	</sub-flow>
+</mule>

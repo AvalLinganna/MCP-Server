@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="ZurichUK_CountryWise_TestSuite" parallel="tests" thread-count="3">
+    
+    <!-- Suite-wide parameters -->
+    <parameter name="browser" value="chrome"/>
+    <parameter name="environment" value="qa"/>
+    <parameter name="headless" value="false"/>
+    
+    <!-- Listeners -->
+    <listeners>
+        <listener class-name="com.capgemini.zurichuk.selenium.reporting.CustomTestListener"/>
+    </listeners>
+    
+    <!-- Australia Test Group -->
+    <test name="Australia_Tests" parallel="methods" thread-count="2">
+        <parameter name="country" value="AU"/>
+        <parameter name="testDataFile" value="AUTestData.xlsx"/>
+        
+        <groups>
+            <run>
+                <include name="au"/>
+                <include name="smoke"/>
+                <include name="regression"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.capgemini.zurichuk.selenium.tests.au.AUPolicyTests"/>
+            <class name="com.capgemini.zurichuk.selenium.tests.au.AUClaimTests"/>
+            <class name="com.capgemini.zurichuk.selenium.tests.GetPolicyListTests">
+                <methods>
+                    <include name="testPolicyListWithDifferentPlans"/>
+                    <include name="testPolicyListPagination"/>
+                    <include name="testUserAccessControl"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    
+    <!-- Indonesia Test Group -->
+    <test name="Indonesia_Tests" parallel="methods" thread-count="2">
+        <parameter name="country" value="ID"/>
+        <parameter name="testDataFile" value="IDTestData.xlsx"/>
+        
+        <groups>
+            <run>
+                <include name="id"/>
+                <include name="smoke"/>
+                <include name="regression"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.capgemini.zurichuk.selenium.tests.id.IDPolicyTests"/>
+            <class name="com.capgemini.zurichuk.selenium.tests.id.IDClaimTests"/>
+        </classes>
+    </test>
+    
+    <!-- API Tests (Cross-Country) -->
+    <test name="API_Tests" parallel="methods" thread-count="3">
+        <parameter name="testType" value="api"/>
+        
+        <groups>
+            <run>
+                <include name="api"/>
+                <include name="smoke"/>
+                <include name="regression"/>
+                <include name="security"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.capgemini.zurichuk.selenium.tests.GetPolicyListTests"/>
+            <class name="com.capgemini.zurichuk.selenium.tests.api.PolicyAPITests"/>
+            <class name="com.capgemini.zurichuk.selenium.tests.api.ClaimAPITests"/>
+        </classes>
+    </test>
+    
+    <!-- Smoke Tests (Quick validation) -->
+    <test name="Smoke_Tests" parallel="none">
+        <parameter name="testType" value="smoke"/>
+        
+        <groups>
+            <run>
+                <include name="smoke"/>
+            </run>
+        </groups>
+        
+        <packages>
+            <package name="com.capgemini.zurichuk.selenium.tests.*"/>
+        </packages>
+    </test>
+    
+</suite>

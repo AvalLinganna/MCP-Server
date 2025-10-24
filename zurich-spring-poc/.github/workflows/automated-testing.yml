@@ -1,0 +1,400 @@
+# Zurich Spring POC - GitHub Actions CI/CD Pipeline
+# Automated Testing Workflow
+# Triggers on pull requests and pushes to main/develop branches
+
+name: Automated Testing Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run regression tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Type of tests to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - unit
+          - integration
+          - regression
+          - smoke
+          - performance
+          - all
+      coverage_enabled:
+        description: 'Enable code coverage'
+        required: false
+        default: true
+        type: boolean
+      parallel_execution:
+        description: 'Enable parallel test execution'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  JAVA_VERSION: '21'
+  MAVEN_OPTS: '-Xmx1024m -XX:+UseG1GC'
+  TEST_PROFILE: 'automation-test'
+
+jobs:
+  # Smoke Tests - Quick validation
+  smoke-tests:
+    name: Smoke Tests
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || contains(github.event.inputs.test_type, 'smoke') || contains(github.event.inputs.test_type, 'all')
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Cache Maven Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+          
+      - name: Run Smoke Tests
+        run: |
+          chmod +x scripts/run-tests.sh
+          ./scripts/run-tests.sh --type smoke --report-path target/smoke-reports
+          
+      - name: Upload Smoke Test Results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: smoke-test-results
+          path: |
+            target/smoke-reports/
+            target/surefire-reports/
+            
+  # Unit Tests - Core functionality validation
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    if: always() && !failure()
+    needs: smoke-tests
+    
+    strategy:
+      matrix:
+        test-group: [model, service, controller, util]
+        
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Run Unit Tests - ${{ matrix.test-group }}
+        run: |
+          chmod +x scripts/run-tests.sh
+          ./scripts/run-tests.sh --type unit --coverage --parallel --report-path target/unit-reports-${{ matrix.test-group }}
+          
+      - name: Upload Unit Test Results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: unit-test-results-${{ matrix.test-group }}
+          path: |
+            target/unit-reports-${{ matrix.test-group }}/
+            target/surefire-reports/
+            target/site/jacoco/
+            
+  # Integration Tests - Component interaction validation
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    if: always() && !failure()
+    needs: unit-tests
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: test
+          POSTGRES_USER: test
+          POSTGRES_DB: zurich_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+          
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Start Application for Integration Tests
+        run: |
+          mvn spring-boot:start -Dspring-boot.run.profiles=test &
+          sleep 30
+          
+      - name: Run Integration Tests
+        run: |
+          chmod +x scripts/run-tests.sh
+          ./scripts/run-tests.sh --type integration --coverage --report-path target/integration-reports
+          
+      - name: Stop Application
+        run: mvn spring-boot:stop
+        
+      - name: Upload Integration Test Results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: integration-test-results
+          path: |
+            target/integration-reports/
+            target/failsafe-reports/
+            target/site/jacoco/
+            
+  # Regression Tests - Full feature validation
+  regression-tests:
+    name: Regression Tests
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || contains(github.event.inputs.test_type, 'regression') || contains(github.event.inputs.test_type, 'all')
+    needs: integration-tests
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Run Regression Tests
+        run: |
+          chmod +x scripts/run-tests.sh
+          ./scripts/run-tests.sh --type regression --coverage --parallel --report-path target/regression-reports
+          
+      - name: Upload Regression Test Results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: regression-test-results
+          path: |
+            target/regression-reports/
+            target/surefire-reports/
+            target/site/jacoco/
+            
+  # Performance Tests - Load and performance validation
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    if: contains(github.event.inputs.test_type, 'performance') || contains(github.event.inputs.test_type, 'all')
+    needs: integration-tests
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Allocate More Memory for Performance Tests
+        run: echo "MAVEN_OPTS=-Xmx2048m -XX:+UseG1GC" >> $GITHUB_ENV
+        
+      - name: Run Performance Tests
+        run: |
+          chmod +x scripts/run-tests.sh
+          ./scripts/run-tests.sh --type performance --report-path target/performance-reports
+          
+      - name: Upload Performance Test Results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: performance-test-results
+          path: |
+            target/performance-reports/
+            target/surefire-reports/
+            
+  # Security Scan
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    if: github.event_name != 'schedule'
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Run OWASP Dependency Check
+        run: |
+          mvn org.owasp:dependency-check-maven:check
+          
+      - name: Upload Security Scan Results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: security-scan-results
+          path: target/dependency-check-report.html
+          
+  # Code Quality Analysis
+  code-quality:
+    name: Code Quality Analysis
+    runs-on: ubuntu-latest
+    if: github.event_name != 'schedule'
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for better analysis
+          
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+          
+      - name: Run Tests for Code Quality
+        run: mvn clean verify
+        
+      - name: SonarCloud Scan
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn sonar:sonar \
+            -Dsonar.projectKey=zurich-spring-poc \
+            -Dsonar.organization=zurich-insurance \
+            -Dsonar.host.url=https://sonarcloud.io
+            
+  # Test Report Aggregation
+  test-report:
+    name: Aggregate Test Reports
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [smoke-tests, unit-tests, integration-tests, regression-tests, performance-tests]
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Download All Test Results
+        uses: actions/download-artifact@v3
+        with:
+          path: test-results/
+          
+      - name: Generate Aggregated Test Report
+        run: |
+          mkdir -p aggregated-reports
+          # Copy all test results to aggregated location
+          find test-results/ -name "*.xml" -exec cp {} aggregated-reports/ \;
+          find test-results/ -name "*.html" -exec cp {} aggregated-reports/ \;
+          find test-results/ -name "*.json" -exec cp {} aggregated-reports/ \;
+          
+      - name: Publish Test Results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Test Results
+          path: 'aggregated-reports/*.xml'
+          reporter: java-junit
+          
+      - name: Upload Aggregated Test Reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: aggregated-test-reports
+          path: aggregated-reports/
+          retention-days: 30
+          
+  # Notification
+  notify:
+    name: Notify Test Results
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [test-report]
+    
+    steps:
+      - name: Notify Success
+        if: success()
+        run: |
+          echo "✅ All tests passed successfully!"
+          echo "Test execution completed at $(date)"
+          
+      - name: Notify Failure
+        if: failure()
+        run: |
+          echo "❌ Some tests failed!"
+          echo "Please check the test reports for details."
+          echo "Failed at $(date)"
+          
+      - name: Create Issue on Test Failure
+        if: failure() && github.event_name == 'schedule'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Automated Test Failure - ${new Date().toISOString()}`,
+              body: `
+              ## Automated Test Failure Report
+              
+              **Date:** ${new Date().toISOString()}
+              **Trigger:** ${context.eventName}
+              **Workflow:** ${context.workflow}
+              **Run ID:** ${context.runId}
+              
+              The automated test suite has failed. Please check the workflow logs and test reports for details.
+              
+              **Action Required:**
+              1. Review test failure logs
+              2. Investigate and fix failing tests
+              3. Close this issue once resolved
+              
+              [View Workflow Run](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
+              `,
+              labels: ['bug', 'automated-test-failure', 'high-priority']
+            })
